@@ -1,13 +1,13 @@
-# markgram
+# teletype
 
 A pure JavaScript library for generating Telegram HTML markup without dependencies.
 
 ## 📖 Overview
-`markgram` helps you create properly formatted Telegram HTML messages with ease. The library includes components like bold, italic, links, preformatted text, and more, with built-in handling for the 4096-character limit.
+`teletype` helps you create properly formatted Telegram HTML messages with ease. The library includes components like bold, italic, links, preformatted text, and more, with built-in handling for the 4096-character limit.
 
 ## 🚀 Installation
 ```bash
-npm install markgram
+npm install teletype
 ```
 
 ## 💡 Usage
@@ -15,7 +15,7 @@ npm install markgram
 const { 
   Layout, Text, Space, Bold, Italic, Underline, Strike, 
   Spoiler, Link, Code, Pre, Quote, Emoji, Row
-} = require('markgram');
+} = require('teletype');
 
 const message = Layout(
   Row(Quote(
@@ -104,7 +104,7 @@ Row(Bold('Part 1'), Italic('Part 2'))
 ```
 
 ## ⚠️ Handling Long Messages
-`markgram` provides strategies to handle Telegram's 4096-character message limit:
+`teletype` provides strategies to handle Telegram's 4096-character message limit:
 - `truncate`: Cuts off text at 4096 characters.
 - `split`: Splits into multiple messages.
 - `toFile`: Saves the message as a text file.
@@ -113,7 +113,7 @@ Row(Bold('Part 1'), Italic('Part 2'))
 ### Example:
 ```javascript
 const longMessage = "...";
-const parts = markgram.splitMessage(longMessage);
+const parts = teletype.splitMessage(longMessage);
 parts.forEach(part => sendToTelegram(part));
 ```
 
