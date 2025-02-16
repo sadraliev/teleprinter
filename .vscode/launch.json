@@ -10,7 +10,10 @@
             "restart": true,
             "skipFiles": [
                 "<node_internals>/**"
-            ]
+            ],
+            "env": {
+                "BOT_TOKEN": ""
+            }
         },
     ],
 }

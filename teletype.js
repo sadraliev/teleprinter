@@ -1,11 +1,12 @@
+const { parser } = require("./parser");
+
 // Utilities
 function escapeHTML(text) {
   return String(text)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
+    .replace(/"/g, "&quot;");
 }
 
 function Text(...elements) {
@@ -70,9 +71,9 @@ function Code(...children) {
 }
 
 function Pre(lang, code) {
-  const langAttr = lang ? ` class="language-${escapeHTML(lang)}"` : "sh";
+  const langAttr = lang ? `class="language-${escapeHTML(lang)}"` : "sh";
   return createComponent(
-    () => `<pre><code${langAttr}>${escapeHTML(code)}</code></pre>`
+    () => `<pre><code ${langAttr}>${escapeHTML(code)}</code></pre>`
   );
 }
 
@@ -80,13 +81,90 @@ function Quote(...children) {
   return createComponent(() => `<blockquote>${Text(...children)}</blockquote>`);
 }
 
-function Emoji(id, fallback) {
+function Emoji(id, fallback = "") {
   return createComponent(
     () =>
       `<tg-emoji emoji-id="${"5368324170671202286"}">${escapeHTML(
         id
       )}</tg-emoji>`
   );
+}
+
+function mapper(nodes) {
+  return nodes.map((node) => {
+    if (node.type === "text") return node.content;
+    const children = mapper(node.children);
+    const tag = node.tag.toLowerCase();
+    switch (tag) {
+      case "b":
+      case "strong":
+        return Bold(...children);
+      case "i":
+      case "em":
+        return Italic(...children);
+      case "u":
+      case "ins":
+        return Underline(...children);
+      case "s":
+      case "strike":
+      case "del":
+        return Strike(...children);
+      case "span":
+        return node.attributes.class === "tg-spoiler"
+          ? Spoiler(...children)
+          : Text(...children);
+      case "tg-spoiler":
+        return Spoiler(...children);
+      case "a":
+        return Link(node.attributes.href, ...children);
+      case "tg-emoji":
+        return Emoji(node.attributes["emoji-id"], children[0] || "");
+      case "code":
+        return Code(...children);
+      case "pre":
+        if (
+          node.children.length === 1 &&
+          node.children[0].type === "tag" &&
+          node.children[0].tag.toLowerCase() === "code"
+        ) {
+          const codeTag = node.children[0];
+          let lang = "";
+          if (
+            codeTag.attributes.class &&
+            codeTag.attributes.class.startsWith("language-")
+          )
+            lang = codeTag.attributes.class.slice("language-".length);
+          const codeContent = mapper(codeTag.children).join("");
+          return Pre(lang, codeContent);
+        }
+        return createComponent(() => `<pre>${Text(...children)}</pre>`);
+      case "blockquote":
+        return Quote(...children);
+      default:
+        return Text(...children);
+    }
+  });
+}
+
+class MessageBuilder {
+  constructor(message = "") {
+    this.message = message;
+  }
+
+  row(...text) {
+    const prettyText = text.map((t) => t.trim()).join(" ");
+    const component = Row(this.message, mapper(parser(prettyText)), Space());
+    return new MessageBuilder(component);
+  }
+
+  space(count = 1) {
+    const message = Row(this.message, Space(count));
+    return new MessageBuilder(message);
+  }
+
+  render() {
+    return Render(this.message);
+  }
 }
 
 module.exports = {
@@ -104,4 +182,5 @@ module.exports = {
   Emoji,
   Row,
   Space,
+  MessageBuilder,
 };
