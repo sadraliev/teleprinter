@@ -1,6 +1,7 @@
 # TeleType
 
-A pure JavaScript library for generating Telegram HTML markup without dependencies.
+## 📖 Overview
+`teletype` helps you create properly formatted Telegram HTML messages with ease, using a fluent builder pattern. The library handles HTML parsing and rendering, making it safe and convenient to create complex formatted messages.
 
 ## 📋 Table of Contents
 - [Overview](#-overview)
@@ -12,8 +13,6 @@ A pure JavaScript library for generating Telegram HTML markup without dependenci
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## 📖 Overview
-`teletype` helps you create properly formatted Telegram HTML messages with ease, using a fluent builder pattern. The library handles HTML parsing and rendering, making it safe and convenient to create complex formatted messages.
 
 ## 🤔 Why TeleType?
 - **Zero Dependencies**: Lightweight and pure JavaScript implementation
@@ -25,6 +24,13 @@ A pure JavaScript library for generating Telegram HTML markup without dependenci
   - Any message sending implementation
 - **Safe HTML**: Automatic escaping and validation of HTML markup
 - **Fluent API**: Intuitive builder pattern for message construction
+  
+#### Key benefits:
+- Write text naturally with proper line breaks using `.row()`
+- Automatic spacing between elements in rows
+- Clean builder pattern approach
+- Built-in HTML parsing
+- Maintainable code structure
 
 Writing formatted messages for Telegram can be messy. Compare these approaches:
 
@@ -36,6 +42,10 @@ message.text += "<b>Status:</b> " + status + "\n";
 message.text += "-------------------\n";
 // Using template literal - better, but still cluttered with HTML tags
 message.text = <b>Welcome!</b><i>Your order details:</i>Price: <code>${price}</code>Status: <i>${status}</i><u>Note:</u> Delivery tomorrow;
+// Manually escaping special characters
+message.text += "Greetings, human! I am a &quot;friendly&quot; bot.<br>";
+message.text += "I enjoy solving your &lt;problems&gt; and ensuring you have &quot;fun&quot; with technology.<br>";
+message.text += "But let&apos;s be honest, it&apos;s &lt;not&gt; so &quot;fun&quot; to keep escaping these &lt;characters&gt;. It&apos;s like trying to &lt;code&gt; while juggling cats.<br>";
 ```
 
 ### With TeleType:
@@ -50,18 +60,18 @@ const message = new MessageBuilder()
 const message = new MessageBuilder()
 .row("<b>Welcome!</b>")
 .row("<i>Your order details:</i>")
-.row("Price: <code>" + price + "</code>")
+.row("Price: <code>", price, "</code>")
 .row("Status:", `<i>${status}</i>`)
 .row("<u>Note:</u> Delivery tomorrow")
 .render();
-```
-#### Key benefits:
-- Write text naturally with proper line breaks using `.row()`
-- Automatic spacing between elements in rows
-- Clean builder pattern approach
-- Built-in HTML parsing
-- Maintainable code structure
+// Clear and expressive
+const message = new MessageBuilder()
+  .row("Greetings, human! I am a \"friendly\" bot.")
+  .row("I enjoy solving your  and ensuring you have \"fun\" with technology.")
+  .row("No need for annoying escapes—this feels more like coding, and less like herding cats.")
+  .render();
 
+```
 ## 🚀 Installation
 ```bash
 npm install teletype
