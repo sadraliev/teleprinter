@@ -11,9 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "env": {
-                "BOT_TOKEN": ""
-            }
+            "envFile": "${workspaceFolder}/.env"
         },
     ],
 }

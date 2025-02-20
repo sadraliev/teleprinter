@@ -18,8 +18,52 @@ bot.command("start", (ctx) => {
   bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });
 });
 
+bot.command("easy", (ctx) => {
+  const status = "Clean, readable, and maintainable";
+  const message = new MessageBuilder()
+    .row("<i>Processing your request...</i>")
+    .row("<b>Status:</b>", status) // Automatically adds whitespace between elements
+    .row("-------------------")
+    .render();
+
+  bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });
+});
+
+bot.command("peasy", (ctx) => {
+  // Complex formatting becomes simple
+  const status = "Clean, readable, and maintainable";
+  const price = "priceless";
+  const message = new MessageBuilder()
+    .row("<b>Welcome!</b>")
+    .row("<i>Your order details:</i>")
+    .row("Price: <code>", price, "</code>")
+    .row("Status:", `<i>${status}</i>`)
+    .row("<u>Note:</u> Delivery tomorrow")
+    .render();
+
+  bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });
+});
+
+bot.command("expressive", (ctx) => {
+  // Clear and expressive
+  const message = new MessageBuilder()
+    .row('Greetings, human! I am a "friendly" bot.')
+    .row(
+      //TODO: fix <problems> in the parser
+      'I enjoy solving your <problems> and ensuring you have "fun" with technology.'
+    )
+    .row(
+      "No need for annoying escapes—this feels more like coding, and less like herding cats."
+    )
+    .render();
+
+  console.log(message, "message");
+
+  bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });
+});
+
 // 💬 Message Handler with Interactive and Fun Examples
-bot.on("message", async (ctx) => {
+bot.command("message", async (ctx) => {
   const message = new MessageBuilder()
     .row("Here's a creative text using the provided HTML tags:")
     .space()
@@ -73,7 +117,7 @@ bot.on("message", async (ctx) => {
       " filled with hidden truths."
     )
     .space()
-    .row("So, take your first step into this mystical world!")
+    .row('So, take your first step into this <mystical> "world!"')
     .render();
 
   await bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });

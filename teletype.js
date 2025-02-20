@@ -6,12 +6,13 @@ function escapeHTML(text) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function Text(...elements) {
   return elements
-    .flat(Infinity)
+    .flat()
     .map((el) => {
       if (el && typeof el === "object" && el.type === "component") {
         return el.render();
@@ -40,24 +41,41 @@ function Space(count = 1) {
 }
 
 // Telegram HTML components
+function toBold(string) {
+  return `<b>${string}</b>`;
+}
 function Bold(...children) {
-  return createComponent(() => `<b>${Text(...children)}</b>`);
+  return createComponent(() => toBold(Text(...children)));
+}
+function toItalic(string) {
+  return `<i>${string}</i>`;
+}
+function Italic(...children) {
+  return createComponent(() => toItalic(Text(...children)));
 }
 
-function Italic(...children) {
-  return createComponent(() => `<i>${Text(...children)}</i>`);
+function toUnderline(string) {
+  return `<u>${string}</u>`;
 }
 
 function Underline(...children) {
-  return createComponent(() => `<u>${Text(...children)}</u>`);
+  return createComponent(() => toUnderline(Text(...children)));
+}
+
+function toStrike(string) {
+  return `<s>${string}</s>`;
 }
 
 function Strike(...children) {
-  return createComponent(() => `<s>${Text(...children)}</s>`);
+  return createComponent(() => toStrike(Text(...children)));
+}
+
+function toSpoiler(string) {
+  return `<tg-spoiler>${string}</tg-spoiler>`;
 }
 
 function Spoiler(...children) {
-  return createComponent(() => `<tg-spoiler>${Text(...children)}</tg-spoiler>`);
+  return createComponent(() => toSpoiler(Text(...children)));
 }
 
 function Link(href, ...children) {
@@ -66,28 +84,45 @@ function Link(href, ...children) {
   );
 }
 
-function Code(...children) {
-  return createComponent(() => `<code>${Text(...children)}</code>`);
+function toCode(string) {
+  return `<code>${string}</code>`;
 }
 
-function Pre(lang, code) {
-  const langAttr = lang ? `class="language-${escapeHTML(lang)}"` : "sh";
-  return createComponent(
-    () => `<pre><code ${langAttr}>${escapeHTML(code)}</code></pre>`
-  );
+function Code(...children) {
+  return createComponent(() => toCode(Text(...children)));
+}
+
+function toPre(string) {
+  return `<pre>${string}</pre>`;
+}
+
+function Pre(code, lang = "") {
+  if (lang) {
+    const codeOutput = toCode(escapeHTML(code));
+    const codeWithClass = codeOutput.replace(
+      "<code>",
+      `<code class="language-${lang}" >`
+    );
+    return createComponent(() => toPre(codeWithClass));
+  }
+
+  return createComponent(() => toPre(escapeHTML(code)));
+}
+
+function toQuote(string) {
+  return `<blockquote>${string}</blockquote>`;
 }
 
 function Quote(...children) {
-  return createComponent(() => `<blockquote>${Text(...children)}</blockquote>`);
+  return createComponent(() => toQuote(Text(...children)));
+}
+
+function toEmoji(id, fallback = "") {
+  return `<tg-emoji emoji-id="${id}">${fallback}</tg-emoji>`;
 }
 
 function Emoji(id, fallback = "") {
-  return createComponent(
-    () =>
-      `<tg-emoji emoji-id="${"5368324170671202286"}">${escapeHTML(
-        id
-      )}</tg-emoji>`
-  );
+  return createComponent(() => toEmoji(id, escapeHTML(fallback)));
 }
 
 function mapper(nodes) {
@@ -135,9 +170,9 @@ function mapper(nodes) {
           )
             lang = codeTag.attributes.class.slice("language-".length);
           const codeContent = mapper(codeTag.children).join("");
-          return Pre(lang, codeContent);
+          return Pre(codeContent, lang);
         }
-        return createComponent(() => `<pre>${Text(...children)}</pre>`);
+        return createComponent(() => toPre(Text(...children)));
       case "blockquote":
         return Quote(...children);
       default:
