@@ -76,7 +76,22 @@ const message = new MessageBuilder()
 ```bash
 npm install teletype
 ```
-
+## ⚙️ Features
+- ✅ Fluent builder pattern for message construction
+- ✅ Safe HTML parsing and escaping
+- ✅ Support for all Telegram HTML tags:
+  - Bold (`<b>`, `<strong>`)
+  - Italic (`<i>`, `<em>`)
+  - Underline (`<u>`, `<ins>`)
+  - Strikethrough (`<s>`, `<strike>`, `<del>`)
+  - Spoiler (`<span class="tg-spoiler">`)
+  - Links (`<a href="...">`)
+  - Code blocks (`<pre>`, `<code>`)
+  - Blockquotes (`<blockquote>`)
+  - Custom emoji (`<tg-emoji>`)
+- ✅ Automatic line breaks and spacing
+- ✅ Raw HTML support with proper escaping
+  
 ## 💡 Usage
 
 ### 1. Using MessageBuilder (Recommended)
@@ -168,22 +183,6 @@ const message = new MessageBuilder()
   )
   .render();
 ```
-
-## ⚙️ Features
-- ✅ Fluent builder pattern for message construction
-- ✅ Safe HTML parsing and escaping
-- ✅ Support for all Telegram HTML tags:
-  - Bold (`<b>`, `<strong>`)
-  - Italic (`<i>`, `<em>`)
-  - Underline (`<u>`, `<ins>`)
-  - Strikethrough (`<s>`, `<strike>`, `<del>`)
-  - Spoiler (`<span class="tg-spoiler">`)
-  - Links (`<a href="...">`)
-  - Code blocks (`<pre>`, `<code>`)
-  - Blockquotes (`<blockquote>`)
-  - Custom emoji (`<tg-emoji>`)
-- ✅ Automatic line breaks and spacing
-- ✅ Raw HTML support with proper escaping
 
 ## 🔧 API Reference
 
