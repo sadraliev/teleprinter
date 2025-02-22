@@ -1,87 +1,132 @@
-function parser(html) {
-  let index = 0;
+function parser(markupText) {
+  const supportedTags = new Set([
+    "b",
+    "strong",
+    "i",
+    "em",
+    "u",
+    "ins",
+    "s",
+    "strike",
+    "del",
+    "span",
+    "tg-spoiler",
+    "a",
+    "tg-emoji",
+    "code",
+    "pre",
+    "blockquote",
+  ]);
 
-  // Recursively parse nodes until an optional stop tag is reached
-  function parseNodes(stopTag = null) {
+  function parseNodes(markupText, startIndex = 0, stopTag = null) {
+    let index = startIndex;
     const nodes = [];
 
-    while (index < html.length) {
-      if (html[index] === "<") {
-        // Check if this is a closing tag
-        if (html.startsWith("</", index)) {
-          const closeIndex = html.indexOf(">", index);
-          if (closeIndex === -1) break; // malformed tag
-          const tagName = html.slice(index + 2, closeIndex).trim();
-          // If this closing tag matches the expected stopTag, consume it and return
+    while (index < markupText.length) {
+      if (markupText[index] === "<") {
+        if (markupText.startsWith("</", index)) {
+          const closeIndex = markupText.indexOf(">", index);
+          if (closeIndex === -1) break;
+
+          const tagName = markupText.slice(index + 2, closeIndex).trim();
           if (stopTag && tagName === stopTag) {
-            index = closeIndex + 1;
-            return nodes;
-          } else {
-            // If it's an unexpected closing tag, skip it
+            return { nodes, newIndex: closeIndex + 1 };
+          }
+
+          nodes.push({ type: "text", content: `</${tagName}>` });
+          index = closeIndex + 1;
+          continue;
+        } else {
+          const closeIndex = markupText.indexOf(">", index);
+          if (closeIndex === -1) break;
+
+          const tagContent = markupText.slice(index + 1, closeIndex).trim();
+          const { tagName, attributes, isSelfClosing } = parseTag(tagContent);
+
+          // Single tags (<hr/>, <img/>) should be saved as text without duplication
+          if (isSelfClosing || markupText[closeIndex - 1] === "/") {
+            nodes.push({ type: "text", content: `<${tagContent}>` });
             index = closeIndex + 1;
             continue;
           }
-        } else {
-          // We found an opening tag
-          const closeIndex = html.indexOf(">", index);
-          if (closeIndex === -1) break; // malformed tag
-          const tagContent = html.slice(index + 1, closeIndex).trim();
 
-          // Separate the tag name from its attributes
-          const firstSpace = tagContent.indexOf(" ");
-          let tagName,
-            attrString = "";
-          if (firstSpace !== -1) {
-            tagName = tagContent.slice(0, firstSpace);
-            attrString = tagContent.slice(firstSpace + 1);
-          } else {
-            tagName = tagContent;
+          // If the tag is not supported, but may contain nested elements
+          if (!supportedTags.has(tagName)) {
+            const result = parseNodes(markupText, closeIndex + 1, tagName);
+
+            const hasSupportedChildren = result.nodes.some(
+              (node) => node.type === "tag"
+            );
+
+            if (hasSupportedChildren) {
+              nodes.push({ type: "text", content: `<${tagContent}>` });
+              nodes.push(...result.nodes);
+              nodes.push({ type: "text", content: `</${tagName}>` });
+            } else {
+              nodes.push({
+                type: "text",
+                content: `<${tagContent}>${markupText.slice(
+                  closeIndex + 1,
+                  result.newIndex
+                )}</${tagName}>`,
+              });
+            }
+
+            index = result.newIndex;
+            continue;
           }
 
-          // Parse attributes from the attribute string using a simple regex
-          const attrs = {};
-          const attrRegex = /([a-zA-Z\-]+)="([^"]*)"/g;
-          let attrMatch;
-          while ((attrMatch = attrRegex.exec(attrString)) !== null) {
-            attrs[attrMatch[1]] = attrMatch[2];
-          }
-
-          // Advance index past the closing ">" of the opening tag
-          index = closeIndex + 1;
-
-          // Recursively parse the children nodes until the matching closing tag is found
-          const children = parseNodes(tagName);
+          // Supported tag
+          const result = parseNodes(markupText, closeIndex + 1, tagName);
           nodes.push({
             type: "tag",
             tag: tagName,
-            attributes: attrs,
-            children: children,
+            attributes,
+            children: result.nodes,
           });
+          index = result.newIndex;
         }
       } else {
-        // Plain text: gather characters until the next "<"
-        const nextTagPos = html.indexOf("<", index);
-        let text;
-        if (nextTagPos === -1) {
-          text = html.slice(index);
-          index = html.length;
-        } else {
-          text = html.slice(index, nextTagPos);
-          index = nextTagPos;
-        }
-        // Add text node only if there's non-empty content (preserving whitespace if needed)
-        if (text) {
-          nodes.push({
-            type: "text",
-            content: text,
-          });
-        }
+        const textEnd = markupText.indexOf("<", index);
+        const text =
+          textEnd === -1
+            ? markupText.slice(index)
+            : markupText.slice(index, textEnd);
+        if (text.trim()) nodes.push({ type: "text", content: text });
+        index = textEnd === -1 ? markupText.length : textEnd;
       }
     }
-    return nodes;
+    return { nodes, newIndex: index };
   }
 
-  return parseNodes();
+  function parseTag(tagContent) {
+    const firstSpace = tagContent.indexOf(" ");
+    let tagName = tagContent;
+    let attrString = "";
+    let isSelfClosing = false;
+
+    if (firstSpace !== -1) {
+      tagName = tagContent.slice(0, firstSpace);
+      attrString = tagContent.slice(firstSpace + 1);
+    }
+
+    // Check if the tag ends with "/"
+    if (attrString.endsWith("/")) {
+      isSelfClosing = true;
+      attrString = attrString.slice(0, -1).trim();
+    }
+
+    const attributes = {};
+    const attrRegex = /([a-zA-Z\-]+)="([^"]*)"/g;
+    let match;
+    while ((match = attrRegex.exec(attrString)) !== null) {
+      attributes[match[1]] = match[2];
+    }
+
+    return { tagName, attributes, isSelfClosing };
+  }
+
+  return parseNodes(markupText).nodes;
 }
 
 module.exports = { parser };

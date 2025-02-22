@@ -188,7 +188,9 @@ class MessageBuilder {
 
   row(...text) {
     const prettyText = text.map((t) => t.trim()).join(" ");
-    const component = Row(this.message, mapper(parser(prettyText)), Space());
+    const parsed = parser(prettyText);
+    const mapped = mapper(parsed);
+    const component = Row(this.message, ...mapped, Space());
     return new MessageBuilder(component);
   }
 

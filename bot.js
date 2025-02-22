@@ -19,11 +19,19 @@ bot.command("start", (ctx) => {
 });
 
 bot.command("easy", (ctx) => {
-  const status = "Clean, readable, and maintainable";
+  const status = "awesome";
   const message = new MessageBuilder()
-    .row("<i>Processing your request...</i>")
+    .row("<i>Clean, readable, and maintainable</i>")
     .row("<b>Status:</b>", status) // Automatically adds whitespace between elements
     .row("-------------------")
+    .row("<b>Unsupported tags are ignored:</b>")
+    .row("<article> Title </article>")
+    .row("<problems>")
+    .row("</problems>", "<b>bold</b>")
+    .row("<div>div blocks <b>bold</b>  </div>")
+    .row('<img src="https://example.com/image.jpg" />')
+    .row("<br/>")
+    .row("<hr/>")
     .render();
 
   bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });
@@ -56,8 +64,6 @@ bot.command("expressive", (ctx) => {
       "No need for annoying escapes—this feels more like coding, and less like herding cats."
     )
     .render();
-
-  console.log(message, "message");
 
   bot.api.sendMessage(ctx.chat.id, message, { parse_mode: "HTML" });
 });
