@@ -1,11 +1,11 @@
-# TeleType
+# TelePrinter
 
 ## 📖 Overview
-`teletype` helps you create properly formatted Telegram HTML messages with ease, using a fluent builder pattern. The library handles HTML parsing and rendering, making it safe and convenient to create complex formatted messages.
+`teleprinter` helps you create properly formatted Telegram HTML messages with ease, using a fluent builder pattern. The library handles HTML parsing and rendering, making it safe and convenient to create complex formatted messages.
 
 ## 📋 Table of Contents
 - [Overview](#-overview)
-- [Why TeleType?](#-why-teletype)
+- [Why TelePrinter?](#-why-teleprinter)
 - [Installation](#-installation)
 - [Usage](#-usage)
 - [Features](#️-features)
@@ -14,10 +14,10 @@
 - [License](#-license)
 
 
-## 🤔 Why TeleType?
-- **Zero Dependencies**: Lightweight and pure JavaScript implementation
-- **Type-Safe**: Built with TypeScript for better developer experience (not yet)
-- **Framework Agnostic**: `teletype` is designed to be framework-agnostic, meaning it works with:
+## 🤔 Why TelePrinter?
+- **Zero Dependencies**: Lightweight and pure TypeScript implementation
+- **Type-Safe**: Built with TypeScript for better developer experience
+- **Framework Agnostic**: `teleprinter` is designed to be framework-agnostic, meaning it works with:
   - Any Telegram bot framework (grammY, node-telegram-bot-api, Telegraf, etc.)
   - Any JavaScript/TypeScript project
   - Both Node.js and browser environments
@@ -31,11 +31,12 @@
 - Clean builder pattern approach
 - Built-in HTML parsing
 - Maintainable code structure
+- Full TypeScript support with type definitions
 
 Writing formatted messages for Telegram can be messy. Compare these approaches:
 
 ### Traditional way:
-```javascript
+```typescript
 // Using string concatenation - hard to read and maintain
 message.text += "\n\n<i>Processing your request...</i>\n";
 message.text += "<b>Status:</b> " + status + "\n";
@@ -48,8 +49,8 @@ message.text += "I enjoy solving your &lt;problems&gt; and ensuring you have &qu
 message.text += "But let&apos;s be honest, it&apos;s &lt;not&gt; so &quot;fun&quot; to keep escaping these &lt;characters&gt;. It&apos;s like trying to &lt;code&gt; while juggling cats.<br>";
 ```
 
-### With TeleType:
-```javascript
+### With TelePrinter:
+```typescript
 // Clean, readable, and maintainable
 const message = new MessageBuilder()
 .row("<i>Processing your request...</i>")
@@ -70,12 +71,13 @@ const message = new MessageBuilder()
   .row("I enjoy solving your  and ensuring you have \"fun\" with technology.")
   .row("No need for annoying escapes—this feels more like coding, and less like herding cats.")
   .render();
-
 ```
+
 ## 🚀 Installation
 ```bash
-npm install teletype
+npm install teleprinter
 ```
+
 ## ⚙️ Features
 - ✅ Fluent builder pattern for message construction
 - ✅ Safe HTML parsing and escaping
@@ -91,12 +93,13 @@ npm install teletype
   - Custom emoji (`<tg-emoji>`)
 - ✅ Automatic line breaks and spacing
 - ✅ Raw HTML support with proper escaping
+- ✅ Full TypeScript support with type definitions
   
 ## 💡 Usage
 
 ### 1. Using MessageBuilder (Recommended)
-```javascript
-const { MessageBuilder } = require('teletype');
+```typescript
+import { MessageBuilder } from 'teleprinter';
 
 // Works with any Telegram bot framework
 const message = new MessageBuilder()
@@ -118,11 +121,11 @@ ctx.reply(message, { parse_mode: "HTML" });
 ```
 
 ### 2. Using Primitives (like JSX)
-```javascript
-const { 
+```typescript
+import { 
   Render, Text, Bold, Italic, Underline, 
   Strike, Link, Code, Pre, Quote, Row, Space 
-} = require('teletype');
+} from 'teleprinter';
 
 const message = Render(
   Row(
@@ -161,7 +164,7 @@ Both approaches produce properly formatted HTML messages, but:
 - Primitives offer more control for complex nested structures and programmatic message generation
 
 ### Complex Formatting Example
-```javascript
+```typescript
 const message = new MessageBuilder()
   .row("Here's a message with various formatting:")
   .space()
@@ -187,77 +190,77 @@ const message = new MessageBuilder()
 ## 🔧 API Reference
 
 ### MessageBuilder
-- `.row(...elements)`: Add a row of text/elements
+- `.row(...elements: string[])`: Add a row of text/elements
 - `.space(count = 1)`: Add line breaks
 - `.render()`: Convert to final HTML string
 
 ### Supported HTML Tags
 
 ## 📚 Primitives with Examples
-### `Bold(...children)`
+### `Bold(...children: (string | Component)[])`
 Returns bold text.
-```javascript
+```typescript
 Bold('Important') // <b>Important</b>
 ```
-### `Italic(...children)`
+### `Italic(...children: (string | Component)[])`
 Returns italic text.
-```javascript
+```typescript
 Italic('Notice') // <i>Notice</i>
 ```
-### `Underline(...children)`
+### `Underline(...children: (string | Component)[])`
 Returns underlined text.
-```javascript
+```typescript
 Underline('Highlighted') // <u>Highlighted</u>
 ```
-### `Strike(...children)`
+### `Strike(...children: (string | Component)[])`
 Returns strikethrough text.
-```javascript
+```typescript
 Strike('Deprecated') // <s>Deprecated</s>
 ```
-### `Link(href, ...children)`
+### `Link(href: string, ...children: (string | Component)[])`
 Returns a clickable link.
-```javascript
-Link('Open Google', 'https://google.com') // <a href="https://google.com">Open Google</a>
+```typescript
+Link('https://google.com', 'Open Google') // <a href="https://google.com">Open Google</a>
 ```
-### `Emoji(id, fallback)`
+### `Emoji(id: string, fallback: string)`
 Returns a Telegram emoji.
-```javascript
+```typescript
 Emoji('1F609', '😉') // <tg-emoji emoji-id="1F609">😉</tg-emoji>
 ```
-### `Quote(...children)`
+### `Quote(...children: (string | Component)[])`
 Returns blockquoted text.
-```javascript
+```typescript
 Quote('Famous quote') // <blockquote>Famous quote</blockquote>
 ```
-### `Pre(lang, code)`
+### `Pre(code: string, lang?: string)`
 Returns preformatted code block.
-```javascript
-Pre('javascript', 'console.log("Hello")')
+```typescript
+Pre('console.log("Hello")', 'javascript')
 // <pre><code class="language-javascript">console.log("Hello")</code></pre>
 ```
 ### `Space(count = 1)`
 Adds line breaks.
-```javascript
+```typescript
 Space(2) // "\n\n"
 ```
-### `Row(...children)`
+### `Row(...children: (string | Component)[])`
 Returns a horizontal layout.
-```javascript
+```typescript
 Row(Bold('Part 1'), Italic('Part 2'))
 // "<b>Part 1</b><i>Part 2</i>"
 ```
 
 ## ⚠️ Handling Long Messages (In Progress)
-`teletype` provides strategies to handle Telegram's 4096-character message limit:
+`teleprinter` provides strategies to handle Telegram's 4096-character message limit:
 - `truncate`: Cuts off text at 4096 characters.
 - `split`: Splits into multiple messages.
 - `toFile`: Saves the message as a text file.
 - `filter`: Removes redundant parts (e.g., stack traces).
 
 ### Example:
-```javascript
+```typescript
 const longMessage = "...";
-const parts = teletype.splitMessage(longMessage);
+const parts = teleprinter.splitMessage(longMessage);
 parts.forEach(part => sendToTelegram(part));
 ```
 

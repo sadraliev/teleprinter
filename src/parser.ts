@@ -1,4 +1,18 @@
-function parser(markupText) {
+interface Node {
+  type: "text" | "tag";
+  content?: string;
+  tag?: string;
+  attributes?: Record<string, string>;
+  children?: Node[];
+}
+
+interface TagParseResult {
+  tagName: string;
+  attributes: Record<string, string>;
+  isSelfClosing: boolean;
+}
+
+export function parser(markupText: string): Node[] {
   const supportedTags = new Set([
     "b",
     "strong",
@@ -18,9 +32,13 @@ function parser(markupText) {
     "blockquote",
   ]);
 
-  function parseNodes(markupText, startIndex = 0, stopTag = null) {
+  function parseNodes(
+    markupText: string,
+    startIndex = 0,
+    stopTag: string | null = null
+  ): { nodes: Node[]; newIndex: number } {
     let index = startIndex;
-    const nodes = [];
+    const nodes: Node[] = [];
 
     while (index < markupText.length) {
       if (markupText[index] === "<") {
@@ -43,14 +61,12 @@ function parser(markupText) {
           const tagContent = markupText.slice(index + 1, closeIndex).trim();
           const { tagName, attributes, isSelfClosing } = parseTag(tagContent);
 
-          // Single tags (<hr/>, <img/>) should be saved as text without duplication
           if (isSelfClosing || markupText[closeIndex - 1] === "/") {
             nodes.push({ type: "text", content: `<${tagContent}>` });
             index = closeIndex + 1;
             continue;
           }
 
-          // If the tag is not supported, but may contain nested elements
           if (!supportedTags.has(tagName)) {
             const result = parseNodes(markupText, closeIndex + 1, tagName);
 
@@ -76,7 +92,6 @@ function parser(markupText) {
             continue;
           }
 
-          // Supported tag
           const result = parseNodes(markupText, closeIndex + 1, tagName);
           nodes.push({
             type: "tag",
@@ -99,7 +114,7 @@ function parser(markupText) {
     return { nodes, newIndex: index };
   }
 
-  function parseTag(tagContent) {
+  function parseTag(tagContent: string): TagParseResult {
     const firstSpace = tagContent.indexOf(" ");
     let tagName = tagContent;
     let attrString = "";
@@ -110,13 +125,12 @@ function parser(markupText) {
       attrString = tagContent.slice(firstSpace + 1);
     }
 
-    // Check if the tag ends with "/"
     if (attrString.endsWith("/")) {
       isSelfClosing = true;
       attrString = attrString.slice(0, -1).trim();
     }
 
-    const attributes = {};
+    const attributes: Record<string, string> = {};
     const attrRegex = /([a-zA-Z\-]+)="([^"]*)"/g;
     let match;
     while ((match = attrRegex.exec(attrString)) !== null) {
@@ -128,5 +142,3 @@ function parser(markupText) {
 
   return parseNodes(markupText).nodes;
 }
-
-module.exports = { parser };
