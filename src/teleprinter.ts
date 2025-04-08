@@ -6,7 +6,7 @@ interface Component {
 }
 
 // Utilities
-function escapeHTML(text: string): string {
+export function escapeHTML(text: string): string {
   return String(text)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -15,7 +15,7 @@ function escapeHTML(text: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function Text(...elements: (string | Component)[]): string {
+export function Text(...elements: (string | Component)[]): string {
   return elements
     .flat()
     .map((el) => {
@@ -29,82 +29,85 @@ function Text(...elements: (string | Component)[]): string {
     .join("");
 }
 
-function createComponent(renderFunction: () => string): Component {
+export function createComponent(renderFunction: () => string): Component {
   return { type: "component", render: renderFunction };
 }
 
-function Render(...children: (string | Component)[]): string {
+export function Render(...children: (string | Component)[]): string {
   return Text(...children);
 }
 
-function Row(...children: (string | Component)[]): Component {
+export function Row(...children: (string | Component)[]): Component {
   return createComponent(() => Text(...children, Space()));
 }
 
-function Space(count = 1): Component {
+export function Space(count = 1): Component {
   return createComponent(() => "\n".repeat(count));
 }
 
 // Telegram HTML components
-function toBold(string: string): string {
+export function toBold(string: string): string {
   return `<b>${string}</b>`;
 }
 
-function Bold(...children: (string | Component)[]): Component {
+export function Bold(...children: (string | Component)[]): Component {
   return createComponent(() => toBold(Text(...children)));
 }
 
-function toItalic(string: string): string {
+export function toItalic(string: string): string {
   return `<i>${string}</i>`;
 }
 
-function Italic(...children: (string | Component)[]): Component {
+export function Italic(...children: (string | Component)[]): Component {
   return createComponent(() => toItalic(Text(...children)));
 }
 
-function toUnderline(string: string): string {
+export function toUnderline(string: string): string {
   return `<u>${string}</u>`;
 }
 
-function Underline(...children: (string | Component)[]): Component {
+export function Underline(...children: (string | Component)[]): Component {
   return createComponent(() => toUnderline(Text(...children)));
 }
 
-function toStrike(string: string): string {
+export function toStrike(string: string): string {
   return `<s>${string}</s>`;
 }
 
-function Strike(...children: (string | Component)[]): Component {
+export function Strike(...children: (string | Component)[]): Component {
   return createComponent(() => toStrike(Text(...children)));
 }
 
-function toSpoiler(string: string): string {
+export function toSpoiler(string: string): string {
   return `<tg-spoiler>${string}</tg-spoiler>`;
 }
 
-function Spoiler(...children: (string | Component)[]): Component {
+export function Spoiler(...children: (string | Component)[]): Component {
   return createComponent(() => toSpoiler(Text(...children)));
 }
 
-function Link(href: string, ...children: (string | Component)[]): Component {
+export function Link(
+  href: string,
+  ...children: (string | Component)[]
+): Component {
   return createComponent(
     () => `<a href="${escapeHTML(href)}">${Text(...children)}</a>`
   );
 }
 
-function toCode(string: string): string {
+export function toCode(string: string): string {
   return `<code>${string}</code>`;
 }
 
-function Code(...children: (string | Component)[]): Component {
+export function Code(...children: (string | Component)[]): Component {
   return createComponent(() => toCode(Text(...children)));
 }
 
-function toPre(string: string): string {
+export function toPre(string: string): string {
   return `<pre>${string}</pre>`;
 }
 
-function Pre(code: string, lang = ""): Component {
+export function Pre(code: string, lang = ""): Component {
   if (lang) {
     const codeOutput = toCode(escapeHTML(code));
     const codeWithClass = codeOutput.replace(
@@ -117,23 +120,23 @@ function Pre(code: string, lang = ""): Component {
   return createComponent(() => toPre(escapeHTML(code)));
 }
 
-function toQuote(string: string): string {
+export function toBlockquote(string: string): string {
   return `<blockquote>${string}</blockquote>`;
 }
 
-function Quote(...children: (string | Component)[]): Component {
-  return createComponent(() => toQuote(Text(...children)));
+export function Blockquote(...children: (string | Component)[]): Component {
+  return createComponent(() => toBlockquote(Text(...children)));
 }
 
-function toEmoji(id: string, fallback = ""): string {
+export function toEmoji(id: string, fallback = ""): string {
   return `<tg-emoji emoji-id="${id}">${fallback}</tg-emoji>`;
 }
 
-function Emoji(id: string, fallback = ""): Component {
+export function Emoji(id: string, fallback = ""): Component {
   return createComponent(() => toEmoji(id, escapeHTML(fallback)));
 }
 
-function mapper(nodes: any[]): (string | Component)[] {
+export function mapper(nodes: any[]): (string | Component)[] {
   return nodes.map((node) => {
     if (node.type === "text") return node.content;
     const children = mapper(node.children);
@@ -185,7 +188,7 @@ function mapper(nodes: any[]): (string | Component)[] {
         }
         return createComponent(() => toPre(Text(...children)));
       case "blockquote":
-        return Quote(...children);
+        return Blockquote(...children);
       default:
         return Text(...children);
     }
@@ -216,20 +219,3 @@ export class MessageBuilder {
     return Render(this.message);
   }
 }
-
-export {
-  Render,
-  Text,
-  Bold,
-  Italic,
-  Underline,
-  Strike,
-  Spoiler,
-  Link,
-  Code,
-  Pre,
-  Quote,
-  Emoji,
-  Row,
-  Space,
-};

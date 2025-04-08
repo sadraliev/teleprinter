@@ -5,14 +5,18 @@
   "author": "Aibek Sadraliev",
   "license": "ISC",
   "description": "",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
     "start:dev": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "ts-jest": "^29.1.2",
+    "@types/jest": "^29.5.12"
   }
 }
