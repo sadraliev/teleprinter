@@ -195,27 +195,29 @@ export function mapper(nodes: any[]): (string | Component)[] {
   });
 }
 
-export class MessageBuilder {
-  private message: string | Component;
+export type MessageBuilder = {
+  message: string | Component;
+  row: (...text: string[]) => MessageBuilder;
+  space: (count?: number) => MessageBuilder;
+  render: () => string;
+};
 
-  constructor(message: string | Component = "") {
-    this.message = message;
-  }
-
-  row(...text: string[]): MessageBuilder {
-    const prettyText = text.map((t) => t.trim()).join(" ");
-    const parsed = parser(prettyText);
-    const mapped = mapper(parsed);
-    const component = Row(this.message, ...mapped, Space());
-    return new MessageBuilder(component);
-  }
-
-  space(count = 1): MessageBuilder {
-    const message = Row(this.message, Space(count));
-    return new MessageBuilder(message);
-  }
-
-  render(): string {
-    return Render(this.message);
-  }
+export function MessageBuilder(
+  message: string | Component = ""
+): MessageBuilder {
+  return {
+    message,
+    row: (...text: string[]) => {
+      const prettyText = text.map((t) => t.trim()).join(" ");
+      const parsed = parser(prettyText);
+      const mapped = mapper(parsed);
+      const component = Row(message, ...mapped, Space());
+      return MessageBuilder(component);
+    },
+    space: (count = 1) => {
+      const newMessage = Row(message, Space(count));
+      return MessageBuilder(newMessage);
+    },
+    render: () => Render(message),
+  };
 }
