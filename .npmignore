@@ -1,0 +1,39 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Test files
+tests/
+*.test.ts
+*.spec.ts
+coverage/
+.nyc_output/
+
+# Dev tools & configs
+.vscode/
+.editorconfig
+.eslintrc*
+.prettierrc*
+tsconfig*.json
+jest.config.*
+makefile
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Env files
+.env*
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db

@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # 📥 Checkout full git history (required for semantic-release)
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ⚙️ Set up Node.js and use npm registry
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      # 🧠 Optional: Output versions for debugging
+      - name: Print Node & NPM version
+        run: node -v && npm -v
+
+      # 📦 Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 🔧 Build the project
+      - name: Build project
+        run: npm run build
+
+      # 🚀 Release using semantic-release
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release

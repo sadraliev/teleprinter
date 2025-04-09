@@ -11,12 +11,17 @@
     "start": "node dist/index.js",
     "start:dev": "tsc --watch",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "semantic-release": "semantic-release"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.1",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.11.24",
-    "typescript": "^5.3.3",
+    "semantic-release": "^24.2.3",
     "ts-jest": "^29.1.2",
-    "@types/jest": "^29.5.12"
+    "typescript": "^5.3.3"
   }
 }
