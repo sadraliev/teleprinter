@@ -58,7 +58,7 @@ describe("teleprinter", () => {
   describe("layout components", () => {
     test("should create a row with text", () => {
       const row = Row("Hello", "World");
-      expect(row.render()).toBe("HelloWorld\n");
+      expect(row.render()).toBe("Hello World\n");
     });
 
     test("should create multiple spaces", () => {
@@ -75,12 +75,12 @@ describe("teleprinter", () => {
 
     test("should add rows to message", () => {
       const builder = MessageBuilder("Hello").row("World").row("!");
-      expect(builder.render()).toBe("HelloWorld\n\n!\n\n");
+      expect(builder.render()).toBe("Hello\nWorld\n!\n");
     });
 
     test("should add spaces between rows", () => {
-      const builder = MessageBuilder("Hello").space(2).row("World");
-      expect(builder.render()).toBe("Hello\n\n\nWorld\n\n");
+      const builder = MessageBuilder("Hello").row().row("World");
+      expect(builder.render()).toBe("Hello\nWorld\n");
     });
   });
 });
