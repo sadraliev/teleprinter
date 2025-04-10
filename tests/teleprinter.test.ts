@@ -69,17 +69,17 @@ describe("teleprinter", () => {
 
   describe("MessageBuilder", () => {
     test("should create a simple message", () => {
-      const builder = new MessageBuilder("Hello");
+      const builder = MessageBuilder("Hello");
       expect(builder.render()).toBe("Hello");
     });
 
     test("should add rows to message", () => {
-      const builder = new MessageBuilder("Hello").row("World").row("!");
+      const builder = MessageBuilder("Hello").row("World").row("!");
       expect(builder.render()).toBe("HelloWorld\n\n!\n\n");
     });
 
     test("should add spaces between rows", () => {
-      const builder = new MessageBuilder("Hello").space(2).row("World");
+      const builder = MessageBuilder("Hello").space(2).row("World");
       expect(builder.render()).toBe("Hello\n\n\nWorld\n\n");
     });
   });
