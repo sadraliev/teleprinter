@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/sadraliev/teleprinter/branch/main/graph/badge.svg)](https://codecov.io/gh/sadraliev/teleprinter)
 # TelePrinter
 
 ## 📖 Overview
