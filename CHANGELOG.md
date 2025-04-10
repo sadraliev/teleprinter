@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/sadraliev/teleprinter/compare/v1.0.0...v1.0.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* improve message formatting and spacing ([cb40891](https://github.com/sadraliev/teleprinter/commit/cb4089189230bbad86c9b07c5033a5d025b53980))
+
 # 1.0.0 (2025-04-09)
 
 
