@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/sadraliev/teleprinter/branch/main/graph/badge.svg)](https://codecov.io/gh/sadraliev/teleprinter)
+[![codecov](https://codecov.io/gh/sadraliev/teleprinter/graph/badge.svg?token=IOT06O769H)](https://codecov.io/gh/sadraliev/teleprinter)
 # TelePrinter
 
 ## 📖 Overview
