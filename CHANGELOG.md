@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/sadraliev/teleprinter/compare/v1.0.1...v1.1.0) (2025-04-10)
+
+
+### Features
+
+* add test coverage reporting ([b57067b](https://github.com/sadraliev/teleprinter/commit/b57067b3ce9e7c302ddd6a61ec2d86916151fe1b))
+
 ## [1.0.1](https://github.com/sadraliev/teleprinter/compare/v1.0.0...v1.0.1) (2025-04-10)
 
 
