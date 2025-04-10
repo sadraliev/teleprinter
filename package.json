@@ -12,7 +12,9 @@
     "start:dev": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "coverage": "jest --coverage",
+    "codecov": "npx codecov"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
