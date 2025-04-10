@@ -38,7 +38,14 @@ export function Render(...children: (string | Component)[]): string {
 }
 
 export function Row(...children: (string | Component)[]): Component {
-  return createComponent(() => Text(...children, Space()));
+  return createComponent(() => {
+    // Join children with spaces and add a newline at the end
+    return (
+      children
+        .map((child) => (typeof child === "string" ? child : child.render()))
+        .join(" ") + "\n"
+    );
+  });
 }
 
 export function Space(count = 1): Component {
@@ -198,7 +205,6 @@ export function mapper(nodes: any[]): (string | Component)[] {
 export type MessageBuilder = {
   message: string | Component;
   row: (...text: string[]) => MessageBuilder;
-  space: (count?: number) => MessageBuilder;
   render: () => string;
 };
 
@@ -211,11 +217,14 @@ export function MessageBuilder(
       const prettyText = text.map((t) => t.trim()).join(" ");
       const parsed = parser(prettyText);
       const mapped = mapper(parsed);
-      const component = Row(message, ...mapped, Space());
-      return MessageBuilder(component);
-    },
-    space: (count = 1) => {
-      const newMessage = Row(message, Space(count));
+      const currentMessage = Render(message);
+      const newMessage = createComponent(() => {
+        if (!currentMessage) {
+          return Text(...mapped) + "\n";
+        }
+        const cleanCurrentMessage = currentMessage.replace(/\n*$/, "");
+        return cleanCurrentMessage + "\n" + Text(...mapped) + "\n";
+      });
       return MessageBuilder(newMessage);
     },
     render: () => Render(message),
