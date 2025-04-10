@@ -6,5 +6,5 @@ module.exports = {
   transform: {
     "^.+\\.ts$": "ts-jest",
   },
-  coverageReporters: ["text", "cobertura"],
+  coverageReporters: ["text", "cobertura", "lcov"],
 };
