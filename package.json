@@ -1,6 +1,6 @@
 {
   "name": "teleprinter",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": "Aibek Sadraliev",
   "license": "ISC",
   "description": "Beautiful messages builder for Telegram bots)",

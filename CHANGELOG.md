@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/sadraliev/teleprinter/compare/v1.2.0...v1.3.0) (2025-04-18)
+
+
+### Features
+
+* improve package configuration and build ([3bedd00](https://github.com/sadraliev/teleprinter/commit/3bedd00463e39f6f5ec54a0b724a44de9210ae7c))
+* improve package configuration and build ([6be620d](https://github.com/sadraliev/teleprinter/commit/6be620dfc0ffa408b5d6003e2ee6c886654a3cd8))
+
 # [1.2.0](https://github.com/sadraliev/teleprinter/compare/v1.1.0...v1.2.0) (2025-04-18)
 
 
