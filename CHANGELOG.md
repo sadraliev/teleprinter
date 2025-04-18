@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/sadraliev/teleprinter/compare/v1.1.0...v1.2.0) (2025-04-18)
+
+
+### Features
+
+* add built-in Alert component ([0044a94](https://github.com/sadraliev/teleprinter/commit/0044a949894b7f7861a90b08e658144287e1e1fc))
+
 # [1.1.0](https://github.com/sadraliev/teleprinter/compare/v1.0.1...v1.1.0) (2025-04-10)
 
 
