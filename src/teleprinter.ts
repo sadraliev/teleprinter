@@ -1,3 +1,4 @@
+import { ComponentFactory, type TComponentFactory } from "./components";
 import { parser } from "./parser";
 
 interface Component {
@@ -204,8 +205,11 @@ export function mapper(nodes: any[]): (string | Component)[] {
 
 export type MessageBuilder = {
   message: string | Component;
-  row: (...text: string[]) => MessageBuilder;
+  row: (
+    ...text: (string | ((components: TComponentFactory) => MessageBuilder))[]
+  ) => MessageBuilder;
   render: () => string;
+  debug: () => void;
 };
 
 export function MessageBuilder(
@@ -213,8 +217,20 @@ export function MessageBuilder(
 ): MessageBuilder {
   return {
     message,
-    row: (...text: string[]) => {
-      const prettyText = text.map((t) => t.trim()).join(" ");
+    row: (
+      ...text: (string | ((components: TComponentFactory) => MessageBuilder))[]
+    ) => {
+      const prettyText = text
+        .map((t) => {
+          if (typeof t === "function") {
+            const component = ComponentFactory();
+            const messageBuilder = t(component);
+            return messageBuilder.render();
+          }
+          return t.trim();
+        })
+        .join(" ");
+
       const parsed = parser(prettyText);
       const mapped = mapper(parsed);
       const currentMessage = Render(message);
@@ -228,5 +244,6 @@ export function MessageBuilder(
       return MessageBuilder(newMessage);
     },
     render: () => Render(message),
+    debug: () => console.log(message),
   };
 }
