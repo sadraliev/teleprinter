@@ -95,7 +95,8 @@ npm install teleprinter
 - ✅ Automatic line breaks and spacing
 - ✅ Raw HTML support with proper escaping
 - ✅ Full TypeScript support with type definitions
-  
+- ✅ Built-in components for notifications
+
 ## 💡 Usage
 
 ### 1. Using MessageBuilder (Recommended)
@@ -187,6 +188,90 @@ const message = new MessageBuilder()
   )
   .render();
 ```
+
+### 3. Built-in Components
+#### Alerts
+```typescript
+import { MessageBuilder, Alert } from 'teleprinter';
+
+const message = MessageBuilder()
+  .row("🛠️ CI/CD Alert")
+  .row(({ Alert }) => 
+    Alert("error", "Build failed for commit `abc1234` in `main` branch", {
+      usernames: ["@dev1", "devops"],
+      group: "ci-cd",
+      timestamp: new Date()
+    })
+  )
+  .row("Check GitHub Actions logs.")
+  .render();
+```
+
+The output will look like this:
+```
+🛠️ CI/CD Alert
+❌ <b>ERROR</b> ([CI-CD] • @dev1, @devops • 2024-03-20T12:00:00.000Z)
+Build failed for commit `abc1234` in `main` branch
+Check GitHub Actions logs.
+```
+
+```typescript
+// Real-world example: Release notification
+const message = MessageBuilder()
+  .row("📅 Release Reminder")
+  .row(({ Alert }) => 
+    Alert("info", "ℹ️ `v1.12.0` scheduled for release tomorrow at 10:00 AM UTC", {
+      usernames: ["@frontend", "@backend"],
+      group: "release",
+      timestamp: new Date()
+    })
+  )
+  .row("Finalize changelogs and verify environments.")
+  .render();
+```
+
+The output will look like this:
+```
+📅 Release Reminder
+💬 <b>INFO</b> ([RELEASE] • @frontend, @backend • 2024-03-20T12:00:00.000Z)
+ℹ️ `v1.12.0` scheduled for release tomorrow at 10:00 AM UTC
+Finalize changelogs and verify environments.
+```
+
+```typescript
+// Real-world example: Deployment notification
+const message = MessageBuilder()
+  .row("🚀 Deployment Notification")
+  .row(({ Alert }) => 
+    Alert("success", "✅ New version `v2.3.1` of `payments-service` deployed to production", {
+      usernames: ["@backend", "@qa"],
+      group: "ci-cd",
+      timestamp: new Date()
+    })
+  )
+  .row("No errors detected in health checks.")
+  .render();
+```
+
+The output will look like this:
+```
+🚀 Deployment Notification
+✅ <b>SUCCESS</b> ([CI-CD] • @backend, @qa • 2024-03-20T12:00:00.000Z)
+✅ New version `v2.3.1` of `payments-service` deployed to production
+No errors detected in health checks.
+```
+
+### Alert Types and Options
+The Alert component supports four types of alerts:
+- `info` (💬): For general information and notifications
+- `success` (✅): For successful operations and deployments
+- `warning` (⚠️): For potential issues and monitoring alerts
+- `error` (❌): For error conditions and system failures
+
+Alert options:
+- `group`: Category or system name (e.g., "ci-cd", "release", "monitoring")
+- `usernames`: Array of usernames to mention (automatically adds @ if missing)
+- `timestamp`: Date or ISO string for the alert time
 
 ## 🔧 API Reference
 

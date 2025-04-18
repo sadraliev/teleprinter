@@ -1,4 +1,2 @@
-import { MessageBuilder } from "./teleprinter";
-
-export { MessageBuilder };
-// export default MessageBuilder;
+export { MessageBuilder } from "./teleprinter";
+export { Alert, type AlertType } from "./components/Alert";
